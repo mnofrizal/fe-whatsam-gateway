@@ -73,14 +73,15 @@ export default function InstanceSettings({ params }) {
   };
 
   return (
-    <motion.div
-      className="p-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Header */}
-      <motion.div variants={itemVariants} className="mb-8">
+    <main className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-8"
+      >
+        {/* Header */}
+        <motion.div variants={itemVariants}>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
@@ -120,10 +121,10 @@ export default function InstanceSettings({ params }) {
             </Alert>
           </motion.div>
         )}
-      </motion.div>
+        </motion.div>
 
-      {/* Proxy Configuration */}
-      <motion.div variants={itemVariants} className="mb-8">
+        {/* Proxy Configuration */}
+        <motion.div variants={itemVariants}>
         <Card className="bg-white border border-slate-200/80 shadow-lg">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-900">
@@ -223,10 +224,10 @@ export default function InstanceSettings({ params }) {
             )}
           </CardContent>
         </Card>
-      </motion.div>
+        </motion.div>
 
-      {/* General Settings */}
-      <motion.div variants={itemVariants}>
+        {/* General Settings */}
+        <motion.div variants={itemVariants}>
         <Card className="bg-white border border-slate-200/80 shadow-lg">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-900">
@@ -295,7 +296,8 @@ export default function InstanceSettings({ params }) {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </main>
   );
 }

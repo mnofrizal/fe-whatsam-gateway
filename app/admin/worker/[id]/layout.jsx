@@ -17,7 +17,7 @@ export default function WorkerLayout({ children }) {
   return (
     <div className="flex">
       <SidebarWorker workerData={workerData} />
-      <div className="flex-1 overflow-auto pl-64">{children}</div>
+      <div className="flex-1 overflow-auto ml-64">{children}</div>
     </div>
   );
 }

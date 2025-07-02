@@ -1,16 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Key, BarChart3, Zap, Clock, Webhook } from "lucide-react";
+import {
+  Users,
+  Crown,
+  BarChart3,
+  Settings,
+  Shield,
+  Globe,
+  UserCheck,
+  CreditCard,
+} from "lucide-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-export function SidebarInstance({ instanceData }) {
-  const params = useParams();
+export function SidebarManager() {
   const pathname = usePathname();
 
   const getLinkClass = (path) => {
-    const fullPath = `/instance/${params.id}${path}`;
+    const fullPath = `/admin/manager${path}`;
     const isActive = pathname === fullPath;
     return isActive
       ? "flex items-center px-3 py-2.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-lg"
@@ -35,21 +43,21 @@ export function SidebarInstance({ instanceData }) {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center">
-              <Zap className="h-4 w-4 text-slate-600" />
+              <Settings className="h-4 w-4 text-slate-600" />
             </div>
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                Instance
+                Management
               </p>
               <p className="text-lg font-semibold text-slate-900">
-                {instanceData.name}
+                Control Panel
               </p>
             </div>
           </div>
         </div>
 
         <nav className="space-y-1">
-          <Link href={`/instance/${params.id}`}>
+          <Link href="/admin/manager">
             <motion.div
               className={getLinkClass("")}
               whileHover={{ scale: 1.01 }}
@@ -59,14 +67,24 @@ export function SidebarInstance({ instanceData }) {
               Dashboard
             </motion.div>
           </Link>
-          <Link href={`/instance/${params.id}/settings`}>
+          <Link href="/admin/manager/users">
             <motion.div
-              className={getLinkClass("/settings")}
+              className={getLinkClass("/users")}
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.2 }}
             >
-              <Key className="h-4 w-4 mr-3" />
-              Settings
+              <Users className="h-4 w-4 mr-3" />
+              Manage Users
+            </motion.div>
+          </Link>
+          <Link href="/admin/manager/subscriptions">
+            <motion.div
+              className={getLinkClass("/subscriptions")}
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Crown className="h-4 w-4 mr-3" />
+              Manage Subscriptions
             </motion.div>
           </Link>
           <motion.div
@@ -74,24 +92,32 @@ export function SidebarInstance({ instanceData }) {
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.2 }}
           >
-            <Webhook className="h-4 w-4 mr-3" />
-            Webhook
+            <UserCheck className="h-4 w-4 mr-3" />
+            User Roles
           </motion.div>
           <motion.div
             className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.2 }}
           >
-            <Zap className="h-4 w-4 mr-3" />
-            Automation
+            <CreditCard className="h-4 w-4 mr-3" />
+            Billing
           </motion.div>
           <motion.div
             className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.2 }}
           >
-            <Clock className="h-4 w-4 mr-3" />
-            Integrations
+            <Shield className="h-4 w-4 mr-3" />
+            Security
+          </motion.div>
+          <motion.div
+            className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
+            whileHover={{ scale: 1.01 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Globe className="h-4 w-4 mr-3" />
+            System Settings
           </motion.div>
         </nav>
       </div>

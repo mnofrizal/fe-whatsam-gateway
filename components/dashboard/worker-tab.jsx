@@ -1,11 +1,18 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Plus, Settings, MoreHorizontal, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { motion } from "framer-motion";
+import { Plus, Settings, MoreHorizontal, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +21,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import Link from "next/link"
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import Link from "next/link";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 8 },
@@ -28,14 +40,14 @@ const itemVariants = {
     y: 0,
     transition: { duration: 0.3 },
   },
-}
+};
 
-export function AdminTab({ workers, setWorkers }) {
-  const [isWorkerDialogOpen, setIsWorkerDialogOpen] = useState(false)
+export function WorkerTab({ workers, setWorkers }) {
+  const [isWorkerDialogOpen, setIsWorkerDialogOpen] = useState(false);
 
   const handleCreateWorker = () => {
-    const nameInput = document.getElementById("worker-name")
-    const endpointInput = document.getElementById("worker-endpoint")
+    const nameInput = document.getElementById("worker-name");
+    const endpointInput = document.getElementById("worker-endpoint");
 
     if (nameInput.value.trim() && endpointInput.value.trim()) {
       const newWorker = {
@@ -45,33 +57,33 @@ export function AdminTab({ workers, setWorkers }) {
         status: "Online",
         lastSeen: "Just now",
         createdAt: new Date().toLocaleDateString(),
-      }
-      setWorkers([...workers, newWorker])
-      nameInput.value = ""
-      endpointInput.value = ""
-      setIsWorkerDialogOpen(false)
+      };
+      setWorkers([...workers, newWorker]);
+      nameInput.value = "";
+      endpointInput.value = "";
+      setIsWorkerDialogOpen(false);
     }
-  }
+  };
 
   const handleDeleteWorker = (workerId) => {
-    setWorkers(workers.filter((worker) => worker.id !== workerId))
-  }
+    setWorkers(workers.filter((worker) => worker.id !== workerId));
+  };
 
   const handleTestConnection = (workerId) => {
     // Simulate connection test
-    alert(`Testing connection for worker ${workerId}...`)
-  }
+    alert(`Testing connection for worker ${workerId}...`);
+  };
 
   const getWorkerStatusColor = (status) => {
     switch (status) {
       case "Online":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200"
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "Offline":
-        return "bg-red-50 text-red-700 border-red-200"
+        return "bg-red-50 text-red-700 border-red-200";
       default:
-        return "bg-gray-50 text-gray-700 border-gray-200"
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
-  }
+  };
 
   return (
     <>
@@ -83,8 +95,12 @@ export function AdminTab({ workers, setWorkers }) {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Total Workers</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-2">{workers.length}</p>
+                    <p className="text-sm font-medium text-slate-600">
+                      Total Workers
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900 mt-2">
+                      {workers.length}
+                    </p>
                   </div>
                   <div className="h-12 w-12 bg-slate-100 rounded-xl flex items-center justify-center">
                     <div className="h-6 w-6 bg-slate-600 rounded"></div>
@@ -101,7 +117,10 @@ export function AdminTab({ workers, setWorkers }) {
                   <div>
                     <p className="text-sm font-medium text-slate-600">Online</p>
                     <p className="text-3xl font-bold text-emerald-600 mt-2">
-                      {workers.filter((worker) => worker.status === "Online").length}
+                      {
+                        workers.filter((worker) => worker.status === "Online")
+                          .length
+                      }
                     </p>
                   </div>
                   <div className="h-12 w-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -117,9 +136,14 @@ export function AdminTab({ workers, setWorkers }) {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600">Offline</p>
+                    <p className="text-sm font-medium text-slate-600">
+                      Offline
+                    </p>
                     <p className="text-3xl font-bold text-red-500 mt-2">
-                      {workers.filter((worker) => worker.status === "Offline").length}
+                      {
+                        workers.filter((worker) => worker.status === "Offline")
+                          .length
+                      }
                     </p>
                   </div>
                   <div className="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center">
@@ -137,10 +161,15 @@ export function AdminTab({ workers, setWorkers }) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">Workers</h3>
-            <p className="text-sm text-slate-600">Manage and monitor your API workers</p>
+            <p className="text-sm text-slate-600">
+              Manage and monitor your API workers
+            </p>
           </div>
 
-          <Dialog open={isWorkerDialogOpen} onOpenChange={setIsWorkerDialogOpen}>
+          <Dialog
+            open={isWorkerDialogOpen}
+            onOpenChange={setIsWorkerDialogOpen}
+          >
             <DialogTrigger asChild>
               <motion.div
                 whileHover={{ scale: 1.01 }}
@@ -156,12 +185,18 @@ export function AdminTab({ workers, setWorkers }) {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Add New Worker</DialogTitle>
-                <DialogDescription>Add a new API worker to your system.</DialogDescription>
+                <DialogDescription>
+                  Add a new API worker to your system.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="worker-name">Worker Name</Label>
-                  <Input id="worker-name" placeholder="Enter worker name" className="border-slate-200" />
+                  <Input
+                    id="worker-name"
+                    placeholder="Enter worker name"
+                    className="border-slate-200"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="worker-endpoint">Endpoint URL</Label>
@@ -173,10 +208,16 @@ export function AdminTab({ workers, setWorkers }) {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsWorkerDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsWorkerDialogOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button className="bg-slate-900 hover:bg-slate-800" onClick={handleCreateWorker}>
+                <Button
+                  className="bg-slate-900 hover:bg-slate-800"
+                  onClick={handleCreateWorker}
+                >
                   Add Worker
                 </Button>
               </DialogFooter>
@@ -191,12 +232,24 @@ export function AdminTab({ workers, setWorkers }) {
               <Table>
                 <TableHeader>
                   <TableRow className="border-slate-200/60">
-                    <TableHead className="font-semibold text-slate-700 py-4 px-6">Name</TableHead>
-                    <TableHead className="font-semibold text-slate-700 py-4">Endpoint</TableHead>
-                    <TableHead className="font-semibold text-slate-700 py-4">Status</TableHead>
-                    <TableHead className="font-semibold text-slate-700 py-4">Last Seen</TableHead>
-                    <TableHead className="font-semibold text-slate-700 py-4">Created</TableHead>
-                    <TableHead className="font-semibold text-slate-700 py-4 text-right">Actions</TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4 px-6">
+                      Name
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4">
+                      Endpoint
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4">
+                      Status
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4">
+                      Last Seen
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4">
+                      Created
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-700 py-4 text-right">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -209,7 +262,9 @@ export function AdminTab({ workers, setWorkers }) {
                       className="border-slate-200/60 hover:bg-slate-50/50 transition-colors"
                     >
                       <TableCell className="py-4 px-6">
-                        <div className="font-medium text-slate-900">{worker.name}</div>
+                        <div className="font-medium text-slate-900">
+                          {worker.name}
+                        </div>
                       </TableCell>
                       <TableCell className="py-4">
                         <div className="text-sm text-slate-600 font-mono max-w-xs truncate">
@@ -219,16 +274,25 @@ export function AdminTab({ workers, setWorkers }) {
                       <TableCell className="py-4">
                         <Badge
                           variant="outline"
-                          className={`${getWorkerStatusColor(worker.status)} font-medium border`}
+                          className={`${getWorkerStatusColor(
+                            worker.status
+                          )} font-medium border`}
                         >
                           {worker.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="py-4 text-slate-600 text-sm">{worker.lastSeen}</TableCell>
-                      <TableCell className="py-4 text-slate-600">{worker.createdAt}</TableCell>
+                      <TableCell className="py-4 text-slate-600 text-sm">
+                        {worker.lastSeen}
+                      </TableCell>
+                      <TableCell className="py-4 text-slate-600">
+                        {worker.createdAt}
+                      </TableCell>
                       <TableCell className="py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            transition={{ duration: 0.2 }}
+                          >
                             <Button
                               size="sm"
                               variant="outline"
@@ -240,7 +304,10 @@ export function AdminTab({ workers, setWorkers }) {
                           </motion.div>
 
                           <Link href={`/admin/worker/${worker.id}`}>
-                            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                            <motion.div
+                              whileHover={{ scale: 1.02 }}
+                              transition={{ duration: 0.2 }}
+                            >
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -254,7 +321,10 @@ export function AdminTab({ workers, setWorkers }) {
 
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                              <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ duration: 0.2 }}
+                              >
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -285,5 +355,5 @@ export function AdminTab({ workers, setWorkers }) {
         </Card>
       </motion.div>
     </>
-  )
+  );
 }

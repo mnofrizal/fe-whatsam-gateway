@@ -31,7 +31,7 @@ export default function InstanceLayout({ children }) {
   return (
     <div className="flex">
       <SidebarInstance instanceData={instanceData} />
-      <div className="flex-1 overflow-auto pl-64">{children}</div>
+      <div className="flex-1 overflow-auto ml-64">{children}</div>
     </div>
   );
 }

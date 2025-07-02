@@ -27,6 +27,13 @@ export function Breadcrumb() {
           href={`/instance/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
+          Instance
+        </Link>
+        <ChevronRight className="h-4 w-4" />
+        <Link
+          href={`/instance/${params.id}`}
+          className="hover:text-slate-900 transition-colors"
+        >
           {instanceData.name}
         </Link>
         {segments.length > 2 && (
@@ -45,8 +52,8 @@ export function Breadcrumb() {
     const segments = pathname.split("/").filter(Boolean);
     return (
       <div className="flex items-center gap-2 text-sm text-slate-600">
-        <Link href="/admin" className="hover:text-slate-900 transition-colors">
-          Admin
+        <Link href={`/admin/worker/${params.id}`} className="hover:text-slate-900 transition-colors">
+          Worker
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
@@ -60,6 +67,38 @@ export function Breadcrumb() {
             <ChevronRight className="h-4 w-4" />
             <span className="text-slate-900 font-medium">
               {segments[3].charAt(0).toUpperCase() + segments[3].slice(1)}
+            </span>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (pathname.startsWith("/admin/manager")) {
+    const segments = pathname.split("/").filter(Boolean);
+    
+    // If on main manager page
+    if (pathname === "/admin/manager") {
+      return (
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <span className="text-slate-900 font-medium">Manager</span>
+        </div>
+      );
+    }
+    
+    // If on manager sub-pages
+    return (
+      <div className="flex items-center gap-2 text-sm text-slate-600">
+        <Link href="/admin/manager" className="hover:text-slate-900 transition-colors">
+          Manager
+        </Link>
+        {segments.length > 2 && (
+          <>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-slate-900 font-medium">
+              {segments[2] === "users" ? "Manage Users" : 
+               segments[2] === "subscriptions" ? "Manage Subscriptions" :
+               segments[2].charAt(0).toUpperCase() + segments[2].slice(1)}
             </span>
           </>
         )}

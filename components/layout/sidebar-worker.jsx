@@ -35,11 +35,18 @@ export function SidebarWorker({ workerData }) {
 
   return (
     <motion.div
-      className="fixed top-16 w-64 bg-white border-r border-slate-200/80 flex-shrink-0 min-h-[calc(100vh-64px)]"
+      className="fixed top-0 w-64 bg-white border-r border-slate-200/80 flex-shrink-0 min-h-screen z-[60]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+      <div className="h-16 flex items-center px-6 border-b border-slate-200/80">
+        <Link href="/">
+          <h2 className="text-lg font-semibold text-slate-900 cursor-pointer hover:text-slate-700 transition-colors">
+            WhatsApp API Gateway
+          </h2>
+        </Link>
+      </div>
       <div className="p-6">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
