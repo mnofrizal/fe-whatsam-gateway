@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   Search,
   Download,
@@ -19,14 +19,20 @@ import {
   Globe,
   Clock,
   TrendingUp,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState, useEffect } from "react"
-import Link from "next/link"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,7 +43,7 @@ const containerVariants = {
       staggerChildren: 0.08,
     },
   },
-}
+};
 
 const itemVariants = {
   hidden: { opacity: 0, y: 8 },
@@ -46,13 +52,13 @@ const itemVariants = {
     y: 0,
     transition: { duration: 0.3 },
   },
-}
+};
 
 // Mock worker data
 const workerData = {
   id: "1",
   name: "Worker-01",
-}
+};
 
 // Mock log data
 const initialLogs = [
@@ -96,440 +102,341 @@ const initialLogs = [
     message: "Session heartbeat received from sess_002",
     details: "Latency: 12ms, Status: Active",
   },
-]
+];
 
 export default function WorkerLogs({ params }) {
-  const [logs, setLogs] = useState(initialLogs)
-  const [filteredLogs, setFilteredLogs] = useState(initialLogs)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [levelFilter, setLevelFilter] = useState("all")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [dateFilter, setDateFilter] = useState("today")
-  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [logs, setLogs] = useState(initialLogs);
+  const [filteredLogs, setFilteredLogs] = useState(initialLogs);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [levelFilter, setLevelFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("today");
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   // Simulate real-time log updates
   useEffect(() => {
-    if (!autoRefresh) return
+    if (!autoRefresh) return;
 
     const interval = setInterval(() => {
       const newLog = {
         id: Date.now(),
-        timestamp: new Date().toLocaleString("sv-SE").replace("T", " ").slice(0, 19),
-        level: ["INFO", "WARN", "ERROR", "DEBUG"][Math.floor(Math.random() * 4)],
-        category: ["SESSION", "API", "SYSTEM", "MEMORY", "NETWORK"][Math.floor(Math.random() * 5)],
+        timestamp: new Date()
+          .toLocaleString("sv-SE")
+          .replace("T", " ")
+          .slice(0, 19),
+        level: ["INFO", "WARN", "ERROR", "DEBUG"][
+          Math.floor(Math.random() * 4)
+        ],
+        category: ["SESSION", "API", "SYSTEM", "MEMORY", "NETWORK"][
+          Math.floor(Math.random() * 5)
+        ],
         message: "New log entry generated",
         details: "Simulated real-time log entry",
-      }
-      setLogs((prev) => [newLog, ...prev.slice(0, 49)]) // Keep only 50 logs
-    }, 5000)
+      };
+      setLogs((prev) => [newLog, ...prev.slice(0, 49)]); // Keep only 50 logs
+    }, 5000);
 
-    return () => clearInterval(interval)
-  }, [autoRefresh])
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   // Filter logs based on search and filters
   useEffect(() => {
-    let filtered = logs
+    let filtered = logs;
 
     if (searchTerm) {
       filtered = filtered.filter(
         (log) =>
           log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
           log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          log.category.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+          log.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
     if (levelFilter !== "all") {
-      filtered = filtered.filter((log) => log.level.toLowerCase() === levelFilter.toLowerCase())
+      filtered = filtered.filter(
+        (log) => log.level.toLowerCase() === levelFilter.toLowerCase()
+      );
     }
 
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((log) => log.category.toLowerCase() === categoryFilter.toLowerCase())
+      filtered = filtered.filter(
+        (log) => log.category.toLowerCase() === categoryFilter.toLowerCase()
+      );
     }
 
-    setFilteredLogs(filtered)
-  }, [logs, searchTerm, levelFilter, categoryFilter, dateFilter])
+    setFilteredLogs(filtered);
+  }, [logs, searchTerm, levelFilter, categoryFilter, dateFilter]);
 
   const getLevelColor = (level) => {
     switch (level) {
       case "ERROR":
-        return "bg-red-50 text-red-700 border-red-200"
+        return "bg-red-50 text-red-700 border-red-200";
       case "WARN":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200"
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
       case "INFO":
-        return "bg-blue-50 text-blue-700 border-blue-200"
+        return "bg-blue-50 text-blue-700 border-blue-200";
       case "DEBUG":
-        return "bg-gray-50 text-gray-700 border-gray-200"
+        return "bg-gray-50 text-gray-700 border-gray-200";
       default:
-        return "bg-gray-50 text-gray-700 border-gray-200"
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
-  }
+  };
 
   const getLevelIcon = (level) => {
     switch (level) {
       case "ERROR":
-        return <XCircle className="h-3 w-3" />
+        return <XCircle className="h-3 w-3" />;
       case "WARN":
-        return <AlertTriangle className="h-3 w-3" />
+        return <AlertTriangle className="h-3 w-3" />;
       case "INFO":
-        return <Info className="h-3 w-3" />
+        return <Info className="h-3 w-3" />;
       case "DEBUG":
-        return <CheckCircle className="h-3 w-3" />
+        return <CheckCircle className="h-3 w-3" />;
       default:
-        return <Info className="h-3 w-3" />
+        return <Info className="h-3 w-3" />;
     }
-  }
+  };
 
   const handleExportLogs = () => {
     const logData = filteredLogs
-      .map((log) => `${log.timestamp} [${log.level}] ${log.category}: ${log.message} - ${log.details}`)
-      .join("\n")
+      .map(
+        (log) =>
+          `${log.timestamp} [${log.level}] ${log.category}: ${log.message} - ${log.details}`
+      )
+      .join("\n");
 
-    const blob = new Blob([logData], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `worker-${params.id}-logs-${new Date().toISOString().split("T")[0]}.txt`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([logData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `worker-${params.id}-logs-${
+      new Date().toISOString().split("T")[0]
+    }.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Top Navigation */}
-      <motion.nav
-        className="bg-white border-b border-slate-200/60"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
+    <motion.div
+      className="p-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Header */}
+      <motion.div variants={itemVariants} className="mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Log Viewer</h1>
+            <p className="text-slate-600 mt-2">
+              Monitor and analyze worker logs in real-time
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant={autoRefresh ? "default" : "outline"}
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              className="shadow-sm"
+            >
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`}
+              />
+              {autoRefresh ? "Auto Refresh On" : "Auto Refresh Off"}
+            </Button>
+            <Button
+              onClick={handleExportLogs}
+              variant="outline"
+              className="shadow-sm bg-transparent"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export Logs
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Log Stats */}
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8"
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-4">
-              <h1 className="text-lg font-semibold text-slate-900">WhatsApp API Gateway</h1>
-
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <ChevronRight className="h-4 w-4" />
-                <Link href="/" className="hover:text-slate-900 transition-colors">
-                  Dashboard
-                </Link>
-                <ChevronRight className="h-4 w-4" />
-                <Link href="/?tab=admin" className="hover:text-slate-900 transition-colors">
-                  Admin
-                </Link>
-                <ChevronRight className="h-4 w-4" />
-                <Link href={`/admin/worker/${params.id}`} className="hover:text-slate-900 transition-colors">
-                  {workerData.name}
-                </Link>
-                <ChevronRight className="h-4 w-4" />
-                <span className="text-slate-900 font-medium">Logs</span>
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Total Logs</p>
+                <p className="text-3xl font-bold text-slate-900 mt-2">
+                  {logs.length}
+                </p>
               </div>
+              <Clock className="h-8 w-8 text-slate-400" />
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="flex items-center gap-3">
-              <motion.button
-                className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-50"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </motion.button>
-
-              <motion.div
-                className="h-8 w-8 bg-slate-900 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                JD
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <motion.div
-          className="w-64 bg-white border-r border-slate-200/80 flex-shrink-0 min-h-[calc(100vh-64px)]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="p-6">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                  <Server className="h-4 w-4 text-slate-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Worker</p>
-                  <p className="text-lg font-semibold text-slate-900">{workerData.name}</p>
-                </div>
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Errors</p>
+                <p className="text-3xl font-bold text-red-600 mt-2">
+                  {logs.filter((log) => log.level === "ERROR").length}
+                </p>
               </div>
+              <XCircle className="h-8 w-8 text-red-400" />
             </div>
+          </CardContent>
+        </Card>
 
-            <nav className="space-y-1">
-              <Link href={`/admin/worker/${params.id}`}>
-                <motion.div
-                  className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <BarChart3 className="h-4 w-4 mr-3" />
-                  Monitoring
-                </motion.div>
-              </Link>
-              <Link href={`/admin/worker/${params.id}/sessions`}>
-                <motion.div
-                  className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Users className="h-4 w-4 mr-3" />
-                  Sessions
-                </motion.div>
-              </Link>
-              <Link href={`/admin/worker/${params.id}/analytics`}>
-                <motion.div
-                  className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <TrendingUp className="h-4 w-4 mr-3" />
-                  Analytics
-                </motion.div>
-              </Link>
-              <motion.div
-                className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-lg"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Clock className="h-4 w-4 mr-3 text-slate-600" />
-                Logs
-              </motion.div>
-              <motion.div
-                className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Settings className="h-4 w-4 mr-3" />
-                Configuration
-              </motion.div>
-              <motion.div
-                className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Shield className="h-4 w-4 mr-3" />
-                Security
-              </motion.div>
-              <motion.div
-                className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Globe className="h-4 w-4 mr-3" />
-                Network
-              </motion.div>
-            </nav>
-          </div>
-        </motion.div>
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Warnings</p>
+                <p className="text-3xl font-bold text-yellow-600 mt-2">
+                  {logs.filter((log) => log.level === "WARN").length}
+                </p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-yellow-400" />
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <motion.div className="p-8" variants={containerVariants} initial="hidden" animate="visible">
-            {/* Header */}
-            <motion.div variants={itemVariants} className="mb-8">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                <div>
-                  <h1 className="text-3xl font-bold text-slate-900">Log Viewer</h1>
-                  <p className="text-slate-600 mt-2">Monitor and analyze worker logs in real-time</p>
-                </div>
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Info</p>
+                <p className="text-3xl font-bold text-blue-600 mt-2">
+                  {logs.filter((log) => log.level === "INFO").length}
+                </p>
+              </div>
+              <Info className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    variant={autoRefresh ? "default" : "outline"}
-                    onClick={() => setAutoRefresh(!autoRefresh)}
-                    className="shadow-sm"
+      {/* Filters */}
+      <motion.div variants={itemVariants} className="mb-6">
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Search logs..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 border-slate-200"
+                />
+              </div>
+              <Select value={levelFilter} onValueChange={setLevelFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Levels</SelectItem>
+                  <SelectItem value="error">Error</SelectItem>
+                  <SelectItem value="warn">Warning</SelectItem>
+                  <SelectItem value="info">Info</SelectItem>
+                  <SelectItem value="debug">Debug</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="session">Session</SelectItem>
+                  <SelectItem value="api">API</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                  <SelectItem value="memory">Memory</SelectItem>
+                  <SelectItem value="network">Network</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={dateFilter} onValueChange={setDateFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="yesterday">Yesterday</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Logs Display */}
+      <motion.div variants={itemVariants}>
+        <Card className="bg-white border border-slate-200/80 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Log Entries ({filteredLogs.length})</span>
+              {autoRefresh && (
+                <Badge
+                  variant="outline"
+                  className="bg-emerald-50 text-emerald-700 border-emerald-200"
+                >
+                  Live
+                </Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="max-h-[600px] overflow-y-auto">
+              <div className="space-y-1 p-4">
+                {filteredLogs.map((log, index) => (
+                  <motion.div
+                    key={log.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.02, duration: 0.3 }}
+                    className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                   >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`} />
-                    {autoRefresh ? "Auto Refresh On" : "Auto Refresh Off"}
-                  </Button>
-                  <Button onClick={handleExportLogs} variant="outline" className="shadow-sm bg-transparent">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Logs
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Log Stats */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-600">Total Logs</p>
-                      <p className="text-3xl font-bold text-slate-900 mt-2">{logs.length}</p>
+                    <div className="flex-shrink-0 text-xs text-slate-500 font-mono w-32">
+                      {log.timestamp}
                     </div>
-                    <Clock className="h-8 w-8 text-slate-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-600">Errors</p>
-                      <p className="text-3xl font-bold text-red-600 mt-2">
-                        {logs.filter((log) => log.level === "ERROR").length}
-                      </p>
-                    </div>
-                    <XCircle className="h-8 w-8 text-red-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-600">Warnings</p>
-                      <p className="text-3xl font-bold text-yellow-600 mt-2">
-                        {logs.filter((log) => log.level === "WARN").length}
-                      </p>
-                    </div>
-                    <AlertTriangle className="h-8 w-8 text-yellow-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-600">Info</p>
-                      <p className="text-3xl font-bold text-blue-600 mt-2">
-                        {logs.filter((log) => log.level === "INFO").length}
-                      </p>
-                    </div>
-                    <Info className="h-8 w-8 text-blue-400" />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Filters */}
-            <motion.div variants={itemVariants} className="mb-6">
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                    <div className="relative flex-1 max-w-md">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                      <Input
-                        placeholder="Search logs..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 border-slate-200"
-                      />
-                    </div>
-                    <Select value={levelFilter} onValueChange={setLevelFilter}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Levels</SelectItem>
-                        <SelectItem value="error">Error</SelectItem>
-                        <SelectItem value="warn">Warning</SelectItem>
-                        <SelectItem value="info">Info</SelectItem>
-                        <SelectItem value="debug">Debug</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="session">Session</SelectItem>
-                        <SelectItem value="api">API</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                        <SelectItem value="memory">Memory</SelectItem>
-                        <SelectItem value="network">Network</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={dateFilter} onValueChange={setDateFilter}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="today">Today</SelectItem>
-                        <SelectItem value="yesterday">Yesterday</SelectItem>
-                        <SelectItem value="week">This Week</SelectItem>
-                        <SelectItem value="month">This Month</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Logs Display */}
-            <motion.div variants={itemVariants}>
-              <Card className="bg-white border border-slate-200/80 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Log Entries ({filteredLogs.length})</span>
-                    {autoRefresh && (
-                      <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                        Live
+                    <div className="flex-shrink-0">
+                      <Badge
+                        variant="outline"
+                        className={`${getLevelColor(
+                          log.level
+                        )} font-medium border flex items-center gap-1`}
+                      >
+                        {getLevelIcon(log.level)}
+                        {log.level}
                       </Badge>
-                    )}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="max-h-[600px] overflow-y-auto">
-                    <div className="space-y-1 p-4">
-                      {filteredLogs.map((log, index) => (
-                        <motion.div
-                          key={log.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.02, duration: 0.3 }}
-                          className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
-                        >
-                          <div className="flex-shrink-0 text-xs text-slate-500 font-mono w-32">{log.timestamp}</div>
-                          <div className="flex-shrink-0">
-                            <Badge
-                              variant="outline"
-                              className={`${getLevelColor(log.level)} font-medium border flex items-center gap-1`}
-                            >
-                              {getLevelIcon(log.level)}
-                              {log.level}
-                            </Badge>
-                          </div>
-                          <div className="flex-shrink-0">
-                            <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200">
-                              {log.category}
-                            </Badge>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-slate-900 font-medium">{log.message}</div>
-                            <div className="text-slate-600 text-sm mt-1">{log.details}</div>
-                          </div>
-                        </motion.div>
-                      ))}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  )
+                    <div className="flex-shrink-0">
+                      <Badge
+                        variant="outline"
+                        className="bg-slate-50 text-slate-700 border-slate-200"
+                      >
+                        {log.category}
+                      </Badge>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-slate-900 font-medium">
+                        {log.message}
+                      </div>
+                      <div className="text-slate-600 text-sm mt-1">
+                        {log.details}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
+  );
 }

@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
       <body>
         <div className="min-h-screen bg-slate-50">
           <Navbar />
-          {children}
+          <main className="pt-16">{children}</main>
         </div>
       </body>
     </html>
