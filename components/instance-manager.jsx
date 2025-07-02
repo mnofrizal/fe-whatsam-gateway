@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sidebar } from "@/components/sidebar"
+import { CreateApiKeyDialog } from "@/components/create-api-key-dialog"
 import { 
   ArrowLeft, 
   Phone, 
@@ -89,10 +90,7 @@ export function InstanceManager({ instanceId = "semen" }) {
               <Key className="h-5 w-5" />
               <CardTitle>API Keys</CardTitle>
             </div>
-            <Button className="bg-green-600 hover:bg-green-700">
-              <Plus className="mr-2 h-4 w-4" />
-              Generate API Key
-            </Button>
+            <CreateApiKeyDialog />
           </CardHeader>
           <CardContent>
             <div className="text-center py-12">

@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
+import { CreateInstanceDialog } from "@/components/create-instance-dialog"
 import Link from "next/link"
 
 export function Dashboard() {
@@ -27,10 +28,7 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">WhatsApp Panel</h1>
-        <Button className="bg-green-600 hover:bg-green-700">
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Instance
-        </Button>
+        <CreateInstanceDialog />
       </div>
 
       {/* Stats Cards */}
