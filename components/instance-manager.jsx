@@ -4,21 +4,24 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Sidebar } from "@/components/sidebar"
-import { CreateApiKeyDialog } from "@/components/create-api-key-dialog"
 import { 
   ArrowLeft, 
   Phone, 
   Key, 
-  Plus,
   Clock,
   BarChart3,
   Activity,
-  AlertCircle
+  AlertCircle,
+  Copy,
+  Eye,
+  EyeOff
 } from "lucide-react"
 import Link from "next/link"
 
 export function InstanceManager({ instanceId = "semen" }) {
+  const [showApiKey, setShowApiKey] = useState(false)
   const [instanceData] = useState({
     name: "Semen",
     displayName: "Aya",
@@ -31,7 +34,7 @@ export function InstanceManager({ instanceId = "semen" }) {
     created: "7/1/2025, 7:50:56 AM",
     lastUpdated: "7/1/2025, 2:31:04 PM",
     createdBy: "Muhammad Naufal",
-    apiKeys: 0,
+    apiKey: "wa_k8x9m2n4p7q1r5s8t3u6v9w2z5a8b1c4",
     messageStats: 1,
     contacts: 4,
     connectionState: "DISCONNECTED",
@@ -42,6 +45,10 @@ export function InstanceManager({ instanceId = "semen" }) {
       occurred: "7/1/2025, 2:31:04 PM"
     }
   })
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(instanceData.apiKey)
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -83,20 +90,57 @@ export function InstanceManager({ instanceId = "semen" }) {
           </div>
         </div>
 
-        {/* API Keys Section */}
+        {/* API Key Section */}
         <Card className="mb-6">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <div className="flex items-center space-x-2">
               <Key className="h-5 w-5" />
-              <CardTitle>API Keys</CardTitle>
+              <CardTitle>API Key</CardTitle>
             </div>
-            <CreateApiKeyDialog />
           </CardHeader>
           <CardContent>
-            <div className="text-center py-12">
-              <Key className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-500 mb-2">No API keys found</p>
-              <p className="text-sm text-gray-400">Create your first API key to start using the API</p>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Instance API Key
+                </label>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1 relative">
+                    <Input
+                      value={showApiKey ? instanceData.apiKey : "•".repeat(instanceData.apiKey.length)}
+                      readOnly
+                      className="pr-20 font-mono text-sm bg-gray-50"
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => setShowApiKey(!showApiKey)}
+                      >
+                        {showApiKey ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={copyToClipboard}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-blue-800 text-sm font-medium mb-1">ℹ️ API Key Information</p>
+                <p className="text-blue-700 text-sm">
+                  This API key is automatically generated for your instance. Use it to authenticate API requests to this WhatsApp instance.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -187,8 +231,8 @@ export function InstanceManager({ instanceId = "semen" }) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-600">API Keys</label>
-                <p className="text-gray-900">{instanceData.apiKeys}</p>
+                <label className="text-sm font-medium text-gray-600">API Key Status</label>
+                <p className="text-green-600 font-medium">Active</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Message Stats</label>
