@@ -93,7 +93,7 @@ export function Breadcrumb() {
       return (
         <div className="flex items-center gap-2 text-sm text-slate-600">
           <Link href="/" className="hover:text-slate-900 transition-colors">
-            <Home className="h-3. w-3" />
+            <Home className="h-3 w-3" />
           </Link>
           <ChevronRight className="h-4 w-4" />
           <span className="text-slate-900 font-medium">Manager</span>
