@@ -19,23 +19,26 @@ export function Breadcrumb() {
   const pathname = usePathname();
   const params = useParams();
 
-  if (pathname.startsWith("/instance/")) {
+  if (pathname.startsWith("/dashboard/instance/")) {
     const segments = pathname.split("/").filter(Boolean);
     return (
       <div className="flex items-center gap-2 text-sm text-slate-600">
-        <Link href="/" className="hover:text-slate-900 transition-colors">
+        <Link
+          href="/dashboard"
+          className="hover:text-slate-900 transition-colors"
+        >
           <Home className="h-3 w-3" />
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
-          href={`/instance/${params.id}`}
+          href={`/dashboard/instance/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
           Instance
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
-          href={`/instance/${params.id}`}
+          href={`/dashboard/instance/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
           {instanceData.name}
@@ -52,23 +55,26 @@ export function Breadcrumb() {
     );
   }
 
-  if (pathname.startsWith("/admin/worker/")) {
+  if (pathname.startsWith("/dashboard/admin/worker/")) {
     const segments = pathname.split("/").filter(Boolean);
     return (
       <div className="flex items-center gap-2 text-sm text-slate-600">
-        <Link href="/" className="hover:text-slate-900 transition-colors">
+        <Link
+          href="/dashboard"
+          className="hover:text-slate-900 transition-colors"
+        >
           <Home className="h-3 w-3" />
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
-          href={`/admin/worker/${params.id}`}
+          href={`/dashboard/admin/worker/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
           Worker
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
-          href={`/admin/worker/${params.id}`}
+          href={`/dashboard/admin/worker/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
           {workerData.name}
@@ -85,14 +91,17 @@ export function Breadcrumb() {
     );
   }
 
-  if (pathname.startsWith("/admin/manager")) {
+  if (pathname.startsWith("/dashboard/admin/manager")) {
     const segments = pathname.split("/").filter(Boolean);
 
     // If on main manager page
-    if (pathname === "/admin/manager") {
+    if (pathname === "/dashboard/admin/manager") {
       return (
         <div className="flex items-center gap-2 text-sm text-slate-600">
-          <Link href="/" className="hover:text-slate-900 transition-colors">
+          <Link
+            href="/dashboard"
+            className="hover:text-slate-900 transition-colors"
+          >
             <Home className="h-3 w-3" />
           </Link>
           <ChevronRight className="h-4 w-4" />
@@ -104,12 +113,15 @@ export function Breadcrumb() {
     // If on manager sub-pages
     return (
       <div className="flex items-center gap-2 text-sm text-slate-600">
-        <Link href="/" className="hover:text-slate-900 transition-colors">
+        <Link
+          href="/dashboard"
+          className="hover:text-slate-900 transition-colors"
+        >
           <Home className="h-3 w-3" />
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link
-          href="/admin/manager"
+          href="/dashboard/admin/manager"
           className="hover:text-slate-900 transition-colors"
         >
           Manager

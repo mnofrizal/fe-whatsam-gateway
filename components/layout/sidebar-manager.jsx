@@ -18,7 +18,7 @@ export function SidebarManager() {
   const pathname = usePathname();
 
   const getLinkClass = (path) => {
-    const fullPath = `/admin/manager${path}`;
+    const fullPath = `/dashboard/admin/manager${path}`;
     const isActive = pathname === fullPath;
     return isActive
       ? "flex items-center px-3 py-2.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-lg"
@@ -33,7 +33,7 @@ export function SidebarManager() {
       transition={{ duration: 0.3 }}
     >
       <div className="h-16 flex items-center px-6 border-b border-slate-200/80">
-        <Link href="/">
+        <Link href="/dashboard">
           <h2 className="text-lg font-semibold text-slate-900 cursor-pointer hover:text-slate-700 transition-colors">
             WhatsApp API Gateway
           </h2>
@@ -57,7 +57,7 @@ export function SidebarManager() {
         </div>
 
         <nav className="space-y-1">
-          <Link href="/admin/manager">
+          <Link href="/dashboard/admin/manager">
             <motion.div
               className={getLinkClass("")}
               whileHover={{ scale: 1.01 }}
@@ -67,7 +67,7 @@ export function SidebarManager() {
               Dashboard
             </motion.div>
           </Link>
-          <Link href="/admin/manager/users">
+          <Link href="/dashboard/admin/manager/users">
             <motion.div
               className={getLinkClass("/users")}
               whileHover={{ scale: 1.01 }}
@@ -77,7 +77,7 @@ export function SidebarManager() {
               Manage Users
             </motion.div>
           </Link>
-          <Link href="/admin/manager/subscriptions">
+          <Link href="/dashboard/admin/manager/subscriptions">
             <motion.div
               className={getLinkClass("/subscriptions")}
               whileHover={{ scale: 1.01 }}

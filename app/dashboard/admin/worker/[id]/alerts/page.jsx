@@ -286,7 +286,7 @@ export default function WorkerAlerts({ params }) {
             </div>
 
             <nav className="space-y-1">
-              <Link href={`/admin/worker/${params.id}`}>
+              <Link href={`/dashboard/admin/worker/${params.id}`}>
                 <motion.div
                   className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
                   whileHover={{ scale: 1.01 }}
@@ -296,7 +296,7 @@ export default function WorkerAlerts({ params }) {
                   Monitoring
                 </motion.div>
               </Link>
-              <Link href={`/admin/worker/${params.id}/sessions`}>
+              <Link href={`/dashboard/admin/worker/${params.id}/sessions`}>
                 <motion.div
                   className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
                   whileHover={{ scale: 1.01 }}
@@ -306,7 +306,7 @@ export default function WorkerAlerts({ params }) {
                   Sessions
                 </motion.div>
               </Link>
-              <Link href={`/admin/worker/${params.id}/analytics`}>
+              <Link href={`/dashboard/admin/worker/${params.id}/analytics`}>
                 <motion.div
                   className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
                   whileHover={{ scale: 1.01 }}
@@ -324,7 +324,7 @@ export default function WorkerAlerts({ params }) {
                 <Bell className="h-4 w-4 mr-3 text-slate-600" />
                 Alerts
               </motion.div>
-              <Link href={`/admin/worker/${params.id}/logs`}>
+              <Link href={`/dashboard/admin/worker/${params.id}/logs`}>
                 <motion.div
                   className="flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
                   whileHover={{ scale: 1.01 }}

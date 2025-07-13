@@ -10,7 +10,7 @@ export function SidebarInstance({ instanceData }) {
   const pathname = usePathname();
 
   const getLinkClass = (path) => {
-    const fullPath = `/instance/${params.id}${path}`;
+    const fullPath = `/dashboard/instance/${params.id}${path}`;
     const isActive = pathname === fullPath;
     return isActive
       ? "flex items-center px-3 py-2.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-lg"
@@ -25,7 +25,7 @@ export function SidebarInstance({ instanceData }) {
       transition={{ duration: 0.3 }}
     >
       <div className="h-16 flex items-center px-6 border-b border-slate-200/80">
-        <Link href="/">
+        <Link href="/dashboard">
           <h2 className="text-lg font-semibold text-slate-900 cursor-pointer hover:text-slate-700 transition-colors">
             WhatsApp API Gateway
           </h2>
@@ -49,7 +49,7 @@ export function SidebarInstance({ instanceData }) {
         </div>
 
         <nav className="space-y-1">
-          <Link href={`/instance/${params.id}`}>
+          <Link href={`/dashboard/instance/${params.id}`}>
             <motion.div
               className={getLinkClass("")}
               whileHover={{ scale: 1.01 }}
@@ -59,7 +59,7 @@ export function SidebarInstance({ instanceData }) {
               Dashboard
             </motion.div>
           </Link>
-          <Link href={`/instance/${params.id}/settings`}>
+          <Link href={`/dashboard/instance/${params.id}/settings`}>
             <motion.div
               className={getLinkClass("/settings")}
               whileHover={{ scale: 1.01 }}

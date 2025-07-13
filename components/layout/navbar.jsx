@@ -2,12 +2,22 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Bell, User, LogOut, AlertCircle, CheckCircle, Info, Clock } from "lucide-react";
+import {
+  Bell,
+  User,
+  LogOut,
+  AlertCircle,
+  CheckCircle,
+  Info,
+  Clock,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { Breadcrumb } from "./breadcrumb";
 
 export function Navbar() {
+  const { data: session, status } = useSession();
   const pathname = usePathname();
   const isInstancePage = pathname.startsWith("/instance/");
   const isWorkerPage = pathname.startsWith("/admin/worker/");
@@ -16,6 +26,51 @@ export function Navbar() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
+
+  // Handle click outside to close dropdowns - MUST be called before any early returns
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setIsNotificationOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    setIsDropdownOpen(false);
+    await signOut({ callbackUrl: "/auth/login" });
+  };
+
+  // Get user initials for avatar
+  const getUserInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Don't render navbar if not authenticated
+  if (status === "loading") {
+    return null;
+  }
+
+  if (!session) {
+    return null;
+  }
 
   // Mock notification data
   const notifications = [
@@ -53,7 +108,7 @@ export function Navbar() {
     },
   ];
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -68,23 +123,6 @@ export function Navbar() {
     }
   };
 
-  // Handle click outside to close dropdowns
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
-        setIsNotificationOpen(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
     <motion.nav
       className="fixed top-0 left-0 right-0 z-50 w-full bg-white/80 backdrop-blur-sm border-b border-slate-200/60"
@@ -94,7 +132,9 @@ export function Navbar() {
     >
       <div
         className={`flex justify-between items-center h-16 px-6 lg:px-8 ${
-          isInstancePage || isWorkerPage || isManagerPage ? "ml-64" : "max-w-7xl mx-auto"
+          isInstancePage || isWorkerPage || isManagerPage
+            ? "ml-64"
+            : "max-w-7xl mx-auto"
         }`}
       >
         <div className="flex items-center">
@@ -125,7 +165,7 @@ export function Navbar() {
               <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {unreadCount > 9 ? '9+' : unreadCount}
+                  {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
             </motion.button>
@@ -140,9 +180,11 @@ export function Navbar() {
                 className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200/80 py-2 z-50 max-h-96 overflow-hidden"
               >
                 <div className="px-4 py-3 border-b border-slate-200/80 flex justify-between items-center">
-                  <h3 className="text-sm font-medium text-slate-900">Notifications</h3>
+                  <h3 className="text-sm font-medium text-slate-900">
+                    Notifications
+                  </h3>
                   <Link href="/notifications">
-                    <span 
+                    <span
                       className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
                       onClick={() => setIsNotificationOpen(false)}
                     >
@@ -150,23 +192,27 @@ export function Navbar() {
                     </span>
                   </Link>
                 </div>
-                
+
                 <div className="max-h-72 overflow-y-auto">
                   {notifications.slice(0, 4).map((notification) => (
                     <div
                       key={notification.id}
                       className={`px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer border-l-4 ${
-                        notification.read 
-                          ? 'border-transparent bg-white' 
-                          : 'border-blue-400 bg-blue-50/30'
+                        notification.read
+                          ? "border-transparent bg-white"
+                          : "border-blue-400 bg-blue-50/30"
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         {getNotificationIcon(notification.type)}
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${
-                            notification.read ? 'text-slate-700' : 'text-slate-900'
-                          }`}>
+                          <p
+                            className={`text-sm font-medium ${
+                              notification.read
+                                ? "text-slate-700"
+                                : "text-slate-900"
+                            }`}
+                          >
                             {notification.title}
                           </p>
                           <p className="text-xs text-slate-500 mt-1">
@@ -186,7 +232,7 @@ export function Navbar() {
                     </div>
                   ))}
                 </div>
-                
+
                 {notifications.length === 0 && (
                   <div className="px-4 py-8 text-center text-slate-500">
                     <Bell className="h-8 w-8 mx-auto mb-2 text-slate-300" />
@@ -206,7 +252,7 @@ export function Navbar() {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <div className="h-8 w-8 bg-slate-900 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                JD
+                {getUserInitials(session?.user?.name)}
               </div>
             </motion.button>
 
@@ -220,10 +266,19 @@ export function Navbar() {
                 className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200/80 py-2 z-50"
               >
                 <div className="px-4 py-2 border-b border-slate-200/80">
-                  <p className="text-sm font-medium text-slate-900">John Doe</p>
-                  <p className="text-xs text-slate-500">john.doe@example.com</p>
+                  <p className="text-sm font-medium text-slate-900">
+                    {session?.user?.name || "User"}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {session?.user?.email || "No email"}
+                  </p>
+                  {session?.user?.role && (
+                    <p className="text-xs text-blue-600 font-medium capitalize">
+                      {session.user.role}
+                    </p>
+                  )}
                 </div>
-                
+
                 <Link href="/profile">
                   <motion.div
                     className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
@@ -235,16 +290,12 @@ export function Navbar() {
                     Profile
                   </motion.div>
                 </Link>
-                
+
                 <motion.div
                   className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                   whileHover={{ x: 4 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    // Handle logout logic here
-                    console.log('Logout clicked');
-                  }}
+                  onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4" />
                   Logout

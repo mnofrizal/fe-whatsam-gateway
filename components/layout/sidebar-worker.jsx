@@ -26,7 +26,7 @@ export function SidebarWorker({ workerData }) {
   const pathname = usePathname();
 
   const getLinkClass = (path) => {
-    const fullPath = `/admin/worker/${params.id}${path}`;
+    const fullPath = `/dashboard/admin/worker/${params.id}${path}`;
     const isActive = pathname === fullPath;
     return isActive
       ? "flex items-center px-3 py-2.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-lg"
@@ -41,7 +41,7 @@ export function SidebarWorker({ workerData }) {
       transition={{ duration: 0.3 }}
     >
       <div className="h-16 flex items-center px-6 border-b border-slate-200/80">
-        <Link href="/">
+        <Link href="/dashboard">
           <h2 className="text-lg font-semibold text-slate-900 cursor-pointer hover:text-slate-700 transition-colors">
             WhatsApp API Gateway
           </h2>
@@ -65,7 +65,7 @@ export function SidebarWorker({ workerData }) {
         </div>
 
         <nav className="space-y-1">
-          <Link href={`/admin/worker/${params.id}`}>
+          <Link href={`/dashboard/admin/worker/${params.id}`}>
             <motion.div
               className={getLinkClass("")}
               whileHover={{ scale: 1.01 }}
@@ -75,7 +75,7 @@ export function SidebarWorker({ workerData }) {
               Monitoring
             </motion.div>
           </Link>
-          <Link href={`/admin/worker/${params.id}/sessions`}>
+          <Link href={`/dashboard/admin/worker/${params.id}/sessions`}>
             <motion.div
               className={getLinkClass("/sessions")}
               whileHover={{ scale: 1.01 }}
@@ -85,7 +85,7 @@ export function SidebarWorker({ workerData }) {
               Sessions
             </motion.div>
           </Link>
-          <Link href={`/admin/worker/${params.id}/analytics`}>
+          <Link href={`/dashboard/admin/worker/${params.id}/analytics`}>
             <motion.div
               className={getLinkClass("/analytics")}
               whileHover={{ scale: 1.01 }}
@@ -119,7 +119,7 @@ export function SidebarWorker({ workerData }) {
             <Globe className="h-4 w-4 mr-3" />
             Network
           </motion.div>
-          <Link href={`/admin/worker/${params.id}/logs`}>
+          <Link href={`/dashboard/admin/worker/${params.id}/logs`}>
             <motion.div
               className={getLinkClass("/logs")}
               whileHover={{ scale: 1.01 }}
