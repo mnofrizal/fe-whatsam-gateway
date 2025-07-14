@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Key, BarChart3, Zap, Clock, Webhook } from "lucide-react";
+import { Key, BarChart3, Zap, Clock, Webhook, Play } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -67,6 +67,16 @@ export function SidebarInstance({ instanceData }) {
             >
               <Key className="h-4 w-4 mr-3" />
               Settings
+            </motion.div>
+          </Link>
+          <Link href={`/dashboard/instance/${params.id}/playground`}>
+            <motion.div
+              className={getLinkClass("/playground")}
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Play className="h-4 w-4 mr-3" />
+              Playground
             </motion.div>
           </Link>
           <motion.div

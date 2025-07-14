@@ -3,12 +3,9 @@
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
-
-// Mock data - in a real app, this would come from a data store or API
-const instanceData = {
-  id: "1",
-  name: "Semen",
-};
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { SESSION_ENDPOINTS, buildApiUrl } from "@/lib/constants";
 
 const workerData = {
   id: "1",
@@ -18,9 +15,55 @@ const workerData = {
 export function Breadcrumb() {
   const pathname = usePathname();
   const params = useParams();
+  const { data: session } = useSession();
+  const [instanceData, setInstanceData] = useState(null);
+
+  // Fetch instance data when on instance pages
+  useEffect(() => {
+    if (
+      pathname.startsWith("/dashboard/instance/") &&
+      session?.accessToken &&
+      params.id
+    ) {
+      const fetchInstanceData = async () => {
+        try {
+          const response = await fetch(
+            buildApiUrl(SESSION_ENDPOINTS.GET_BY_ID(params.id)),
+            {
+              headers: {
+                Authorization: `Bearer ${session.accessToken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data?.session) {
+              setInstanceData({
+                id: data.data.session.id,
+                name: data.data.session.name,
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching instance data for breadcrumb:", err);
+          // Fallback to generic name
+          setInstanceData({
+            id: params.id,
+            name: `Instance ${params.id}`,
+          });
+        }
+      };
+
+      fetchInstanceData();
+    }
+  }, [pathname, session, params.id]);
 
   if (pathname.startsWith("/dashboard/instance/")) {
     const segments = pathname.split("/").filter(Boolean);
+    const instanceName = instanceData?.name || `Instance ${params.id}`;
+
     return (
       <div className="flex items-center gap-2 text-sm text-slate-600">
         <Link
@@ -41,13 +84,17 @@ export function Breadcrumb() {
           href={`/dashboard/instance/${params.id}`}
           className="hover:text-slate-900 transition-colors"
         >
-          {instanceData.name}
+          {instanceName}
         </Link>
-        {segments.length > 2 && (
+        {segments.length > 3 && (
           <>
             <ChevronRight className="h-4 w-4" />
             <span className="text-slate-900 font-medium">
-              {segments[2].charAt(0).toUpperCase() + segments[2].slice(1)}
+              {segments[3] === "settings"
+                ? "Settings"
+                : segments[3] === "playground"
+                ? "Playground"
+                : segments[3].charAt(0).toUpperCase() + segments[3].slice(1)}
             </span>
           </>
         )}

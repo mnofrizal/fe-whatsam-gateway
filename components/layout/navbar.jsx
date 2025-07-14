@@ -19,9 +19,9 @@ import { Breadcrumb } from "./breadcrumb";
 export function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const isInstancePage = pathname.startsWith("/instance/");
-  const isWorkerPage = pathname.startsWith("/admin/worker/");
-  const isManagerPage = pathname.startsWith("/admin/manager");
+  const isInstancePage = pathname.startsWith("/dashboard/instance/");
+  const isWorkerPage = pathname.startsWith("/dashboard/admin/worker/");
+  const isManagerPage = pathname.startsWith("/dashboard/admin/manager");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef(null);
@@ -78,7 +78,7 @@ export function Navbar() {
       id: 1,
       type: "error",
       title: "Instance Connection Failed",
-      message: "Semen instance failed to connect",
+      message: "WhatsApp instance failed to connect",
       time: "2 minutes ago",
       read: false,
     },

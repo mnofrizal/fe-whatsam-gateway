@@ -3,7 +3,7 @@ import React from "react";
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="pt-16">
+    <div className="">
       <Navbar />
       {children}
     </div>
