@@ -108,7 +108,7 @@ export default function InstanceDetail() {
         const transformedData = {
           id: session.id,
           name: session.name,
-          displayName: session.name, // Use name as displayName if not provided
+          displayName: session.displayName, // Use name as displayName if not provided
           phoneNumber: session.phoneNumber,
           status: session.status,
           active: session.status === SESSION_STATUS.CONNECTED ? "Yes" : "No",

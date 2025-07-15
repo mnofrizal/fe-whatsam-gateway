@@ -25,6 +25,9 @@ fe-whatsam-gateway/
 │   │   │   ├── manager/          # Manager dashboard
 │   │   │   └── worker/[id]/      # Worker detail pages
 │   │   └── instance/[id]/        # Instance detail pages
+│   │       ├── page.jsx          # Instance dashboard
+│   │       ├── settings/         # Instance settings
+│   │       └── playground/       # WhatsApp API testing playground
 │   ├── api/auth/[...nextauth]/   # NextAuth.js API routes
 │   └── notifications/            # Notification center
 ├── components/                   # Reusable components
