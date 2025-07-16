@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
         <NextAuthSessionProvider>
           <div className="min-h-screen bg-slate-50">
             <Navbar />
-            <main className="pt-16">{children}</main>
+            <main className="">{children}</main>
           </div>
         </NextAuthSessionProvider>
       </body>
