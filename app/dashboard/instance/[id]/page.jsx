@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -40,6 +40,9 @@ import {
   SESSION_STATUS,
   getSessionStatusVariant,
 } from "@/lib/constants";
+import { useSessionSocket } from "@/hooks/use-socket";
+import QRCodeDisplay from "@/components/ui/qr-code-display";
+import SocketStatusIndicator from "@/components/ui/socket-status-indicator";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -70,14 +73,19 @@ export default function InstanceDetail() {
   const [showApiKey, setShowApiKey] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showQRDialog, setShowQRDialog] = useState(false);
-  const [qrCode, setQrCode] = useState(null);
-  const [qrPolling, setQrPolling] = useState(false);
   const [actionLoading, setActionLoading] = useState({
     connect: false,
     disconnect: false,
     restart: false,
     logout: false,
   });
+
+  // Socket.IO integration for real-time updates
+  const {
+    isConnected: socketConnected,
+    connectionError: socketError,
+    sessionStatus: realtimeStatus,
+  } = useSessionSocket(params.id);
 
   // Fetch instance data from API
   const fetchInstanceData = async () => {
@@ -195,59 +203,51 @@ export default function InstanceDetail() {
     }
   }, [session, params.id]);
 
-  // QR Code polling function
-  const pollQRCode = async () => {
-    if (!session?.accessToken || qrPolling) return;
+  // Handle real-time status updates from Socket.IO
+  const handleRealtimeStatusChange = useCallback(
+    (statusData) => {
+      if (statusData) {
+        // Update instance data with real-time status
+        setInstanceData((prev) => {
+          if (!prev) return prev; // Guard against null instanceData
 
-    setQrPolling(true);
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(
-          buildApiUrl(SESSION_ENDPOINTS.QR_CODE(params.id)),
-          {
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+          return {
+            ...prev,
+            status: statusData.status,
+            connectionState: statusData.status,
+            active:
+              statusData.status === SESSION_STATUS.CONNECTED ? "Yes" : "No",
+            phoneNumber: statusData.phoneNumber || prev.phoneNumber,
+            displayName: statusData.displayName || prev.displayName,
+            lastConnected:
+              statusData.status === SESSION_STATUS.CONNECTED
+                ? new Date().toLocaleString()
+                : prev.lastConnected,
+            lastDisconnected:
+              statusData.status === SESSION_STATUS.DISCONNECTED
+                ? new Date().toLocaleString()
+                : prev.lastDisconnected,
+            lastUpdated: new Date().toLocaleString(),
+          };
+        });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            if (data.data.qrCode) {
-              setQrCode(data.data.qrCode);
-            }
-
-            // If status is CONNECTED, stop polling and close dialog
-            if (data.data.status === SESSION_STATUS.CONNECTED) {
-              clearInterval(pollInterval);
-              setQrPolling(false);
-              setShowQRDialog(false);
-              setQrCode(null);
-              // Refresh instance data to show updated status
-              fetchInstanceData();
-            }
-          }
+        // Close QR dialog when connected
+        if (statusData.status === SESSION_STATUS.CONNECTED) {
+          setShowQRDialog(false);
         }
-      } catch (err) {
-        console.error("Error polling QR code:", err);
       }
-    }, 3000); // Poll every 3 seconds
+    },
+    [] // Remove instanceData dependency to prevent infinite loop
+  );
 
-    // Stop polling after 5 minutes
-    setTimeout(() => {
-      clearInterval(pollInterval);
-      setQrPolling(false);
-    }, 300000);
+  // Update instance data when real-time status changes
+  useEffect(() => {
+    if (realtimeStatus) {
+      handleRealtimeStatusChange(realtimeStatus);
+    }
+  }, [realtimeStatus, handleRealtimeStatusChange]);
 
-    return () => {
-      clearInterval(pollInterval);
-      setQrPolling(false);
-    };
-  };
-
-  // Connect session function
+  // Connect session function with Socket.IO integration
   const handleConnect = async () => {
     try {
       setActionLoading((prev) => ({ ...prev, connect: true }));
@@ -267,14 +267,12 @@ export default function InstanceDetail() {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          // If status is QR_REQUIRED, show QR dialog and start polling
+          // If status is QR_REQUIRED, show QR dialog
+          // Socket.IO will handle real-time QR code updates
           if (data.data.status === SESSION_STATUS.QR_REQUIRED) {
             setShowQRDialog(true);
-            setQrCode(null);
-            pollQRCode();
           }
-          // Refresh instance data
-          fetchInstanceData();
+          // Real-time updates via Socket.IO - no need to refresh manually
         } else {
           throw new Error(data.message || "Failed to connect session");
         }
@@ -310,8 +308,7 @@ export default function InstanceDetail() {
         const data = await response.json();
         if (data.success) {
           alert(data.data.message || "Session disconnected successfully");
-          // Refresh instance data
-          fetchInstanceData();
+          // Real-time updates via Socket.IO - no need to refresh manually
         } else {
           throw new Error(data.message || "Failed to disconnect session");
         }
@@ -347,8 +344,7 @@ export default function InstanceDetail() {
         const data = await response.json();
         if (data.success) {
           alert(data.data.message || "Session restarted successfully");
-          // Refresh instance data
-          fetchInstanceData();
+          // Real-time updates via Socket.IO - no need to refresh manually
         } else {
           throw new Error(data.message || "Failed to restart session");
         }
@@ -384,8 +380,7 @@ export default function InstanceDetail() {
         const data = await response.json();
         if (data.success) {
           alert("Session logged out successfully");
-          // Refresh instance data
-          fetchInstanceData();
+          // Real-time updates via Socket.IO - no need to refresh manually
         } else {
           throw new Error(data.message || "Failed to logout session");
         }
@@ -399,25 +394,6 @@ export default function InstanceDetail() {
       setActionLoading((prev) => ({ ...prev, logout: false }));
     }
   };
-
-  // Generate QR code image from raw string
-  const generateQRCodeImage = (qrString) => {
-    if (!qrString) return null;
-
-    // Use a QR code generation service or library
-    // For now, we'll use qr-server.com as a simple solution
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-      qrString
-    )}`;
-    return qrUrl;
-  };
-
-  // Clean up polling on component unmount
-  useEffect(() => {
-    return () => {
-      setQrPolling(false);
-    };
-  }, []);
 
   const copyApiKey = () => {
     if (instanceData?.apiKey) {
@@ -481,7 +457,7 @@ export default function InstanceDetail() {
             </p>
             <Button
               onClick={fetchInstanceData}
-              className="bg-slate-900 hover:bg-slate-800"
+              className="bg-slate-900 hover:bg-slate-800 cursor-pointer"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Retry
@@ -527,6 +503,10 @@ export default function InstanceDetail() {
                   <span>{instanceData.displayName}</span>
                 </div>
               </div>
+              <SocketStatusIndicator
+                isConnected={socketConnected}
+                error={socketError}
+              />
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -534,7 +514,7 @@ export default function InstanceDetail() {
                 variant="outline"
                 onClick={fetchInstanceData}
                 disabled={loading}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
                 <RefreshCw
                   className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -543,7 +523,7 @@ export default function InstanceDetail() {
               </Button>
               {instanceData?.status !== SESSION_STATUS.CONNECTED && (
                 <Button
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
                   onClick={handleConnect}
                   disabled={actionLoading.connect || loading}
                 >
@@ -555,8 +535,7 @@ export default function InstanceDetail() {
               )}
               {instanceData?.status !== SESSION_STATUS.DISCONNECTED && (
                 <Button
-                  variant="outline"
-                  className="border-slate-200 text-slate-700 bg-transparent"
+                  className="bg-red-600 hover:bg-red-700 text-white shadow-sm cursor-pointer"
                   onClick={handleDisconnect}
                   disabled={actionLoading.disconnect || loading}
                 >
@@ -567,7 +546,7 @@ export default function InstanceDetail() {
                 </Button>
               )}
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer"
                 onClick={handleRestart}
                 disabled={actionLoading.restart || loading}
               >
@@ -577,7 +556,7 @@ export default function InstanceDetail() {
                 Restart
               </Button>
               <Button
-                className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm cursor-pointer"
                 onClick={handleLogout}
                 disabled={actionLoading.logout || loading}
               >
@@ -612,7 +591,7 @@ export default function InstanceDetail() {
                     size="sm"
                     variant="outline"
                     onClick={() => setShowApiKey(!showApiKey)}
-                    className="border-slate-200"
+                    className="border-slate-200 cursor-pointer"
                   >
                     {showApiKey ? (
                       <EyeOff className="h-4 w-4" />
@@ -624,7 +603,7 @@ export default function InstanceDetail() {
                     size="sm"
                     variant="outline"
                     onClick={copyApiKey}
-                    className="border-slate-200 bg-transparent"
+                    className="border-slate-200 bg-transparent cursor-pointer"
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -911,75 +890,31 @@ export default function InstanceDetail() {
           </motion.div>
         )}
 
-        {/* QR Code Dialog */}
+        {/* QR Code Dialog with Socket.IO Integration */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="sm:max-w-[400px] bg-white">
+          <DialogContent className="sm:max-w-[500px] bg-white">
             <DialogHeader>
               <DialogTitle className="text-center text-slate-900">
                 Connect WhatsApp
               </DialogTitle>
               <DialogDescription className="text-center text-slate-600">
-                Scan this QR code with your WhatsApp mobile app
+                Real-time QR code with Socket.IO integration
               </DialogDescription>
             </DialogHeader>
-            <div className="flex flex-col items-center py-6">
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-6">
-                {qrCode ? (
-                  <img
-                    src={generateQRCodeImage(qrCode)}
-                    alt="WhatsApp QR Code"
-                    className="w-48 h-48"
-                  />
-                ) : (
-                  <div className="w-48 h-48 flex items-center justify-center bg-slate-100 rounded-lg">
-                    {qrPolling ? (
-                      <div className="text-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-slate-600 mx-auto mb-2" />
-                        <p className="text-sm text-slate-600">
-                          Generating QR Code...
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <AlertCircle className="h-8 w-8 text-slate-400 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">
-                          No QR Code Available
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="text-center space-y-2">
-                <p className="text-sm text-slate-600">
-                  Open WhatsApp → Settings → Linked Devices → Link a Device
-                </p>
-                {qrPolling ? (
-                  <p className="text-xs text-slate-500">
-                    Waiting for QR code... This may take a few seconds
-                  </p>
-                ) : (
-                  <p className="text-xs text-slate-500">
-                    QR Code will refresh automatically
-                  </p>
-                )}
-              </div>
-            </div>
+
+            {/* Socket.IO QR Code Component */}
+            <QRCodeDisplay
+              sessionId={params.id}
+              onStatusChange={handleRealtimeStatusChange}
+            />
+
             <DialogFooter className="flex justify-center gap-3">
               <Button
                 variant="outline"
                 onClick={() => setShowQRDialog(false)}
-                className="border-slate-200"
+                className="border-slate-200 cursor-pointer"
               >
-                Cancel
-              </Button>
-              <Button
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-                onClick={() => {
-                  setShowQRDialog(false);
-                }}
-              >
-                Refresh QR Code
+                Close
               </Button>
             </DialogFooter>
           </DialogContent>

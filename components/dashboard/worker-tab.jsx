@@ -202,7 +202,7 @@ export function WorkerTab() {
     <>
       {/* Worker Stats */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div whileHover={{ y: -1 }} transition={{ duration: 0.2 }}>
             <Card className="bg-white border border-slate-200/80 shadow-md">
               <CardContent className="p-6">
@@ -235,6 +235,26 @@ export function WorkerTab() {
                   </div>
                   <div className="h-12 w-12 bg-emerald-100 rounded-xl flex items-center justify-center">
                     <div className="h-6 w-6 bg-emerald-500 rounded-full"></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -1 }} transition={{ duration: 0.2 }}>
+            <Card className="bg-white border border-slate-200/80 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600">
+                      Offline
+                    </p>
+                    <p className="text-3xl font-bold text-red-600 mt-2">
+                      {loading ? "..." : offlineWorkers}
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center">
+                    <div className="h-6 w-6 bg-red-500 rounded-full"></div>
                   </div>
                 </div>
               </CardContent>
