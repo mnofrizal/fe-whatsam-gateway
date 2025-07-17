@@ -16,6 +16,10 @@ import {
   Clock,
   User,
   Smartphone,
+  Mic,
+  Video,
+  File,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,17 +73,44 @@ export default function PlaygroundPage() {
     message: "",
   });
 
-  const [mediaMessage, setMediaMessage] = useState({
+  const [imageMessage, setImageMessage] = useState({
     to: "",
+    imageUrl: "",
     caption: "",
-    mediaUrl: "",
-    mediaType: "image",
+  });
+
+  const [fileMessage, setFileMessage] = useState({
+    to: "",
+    fileUrl: "",
+    filename: "",
+    caption: "",
+  });
+
+  const [voiceMessage, setVoiceMessage] = useState({
+    to: "",
+    audioUrl: "",
+  });
+
+  const [videoMessage, setVideoMessage] = useState({
+    to: "",
+    videoUrl: "",
+    caption: "",
   });
 
   const [contactMessage, setContactMessage] = useState({
     to: "",
     contactName: "",
     contactPhone: "",
+    contactEmail: "",
+    contactOrganization: "",
+  });
+
+  const [locationMessage, setLocationMessage] = useState({
+    to: "",
+    latitude: "",
+    longitude: "",
+    name: "",
+    address: "",
   });
 
   // Fetch instance data to get API key
@@ -142,13 +173,36 @@ export default function PlaygroundPage() {
             message: textMessage.message,
           };
           break;
-        case "media":
-          endpoint = MESSAGING_ENDPOINTS.SEND_MEDIA;
+        case "image":
+          endpoint = MESSAGING_ENDPOINTS.SEND_IMAGE;
           payload = {
-            to: mediaMessage.to,
-            mediaUrl: mediaMessage.mediaUrl,
-            caption: mediaMessage.caption || undefined,
-            mediaType: mediaMessage.mediaType,
+            to: imageMessage.to,
+            imageUrl: imageMessage.imageUrl,
+            caption: imageMessage.caption || undefined,
+          };
+          break;
+        case "file":
+          endpoint = MESSAGING_ENDPOINTS.SEND_FILE;
+          payload = {
+            to: fileMessage.to,
+            fileUrl: fileMessage.fileUrl,
+            filename: fileMessage.filename,
+            caption: fileMessage.caption || undefined,
+          };
+          break;
+        case "voice":
+          endpoint = MESSAGING_ENDPOINTS.SEND_VOICE;
+          payload = {
+            to: voiceMessage.to,
+            audioUrl: voiceMessage.audioUrl,
+          };
+          break;
+        case "video":
+          endpoint = MESSAGING_ENDPOINTS.SEND_VIDEO;
+          payload = {
+            to: videoMessage.to,
+            videoUrl: videoMessage.videoUrl,
+            caption: videoMessage.caption || undefined,
           };
           break;
         case "contact":
@@ -157,6 +211,22 @@ export default function PlaygroundPage() {
             to: contactMessage.to,
             contactName: contactMessage.contactName,
             contactPhone: contactMessage.contactPhone,
+            ...(contactMessage.contactEmail && {
+              contactEmail: contactMessage.contactEmail,
+            }),
+            ...(contactMessage.contactOrganization && {
+              contactOrganization: contactMessage.contactOrganization,
+            }),
+          };
+          break;
+        case "location":
+          endpoint = MESSAGING_ENDPOINTS.SEND_LOCATION;
+          payload = {
+            to: locationMessage.to,
+            latitude: parseFloat(locationMessage.latitude),
+            longitude: parseFloat(locationMessage.longitude),
+            name: locationMessage.name,
+            address: locationMessage.address,
           };
           break;
         default:
@@ -306,15 +376,30 @@ export default function PlaygroundPage() {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="text" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="text">Text Message</TabsTrigger>
-                    <TabsTrigger value="media">Media Message</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-7 text-xs">
+                    <TabsTrigger value="text">Text</TabsTrigger>
+                    <TabsTrigger value="image">Image</TabsTrigger>
+                    <TabsTrigger value="file">File</TabsTrigger>
+                    <TabsTrigger value="voice">Voice</TabsTrigger>
+                    <TabsTrigger value="video">Video</TabsTrigger>
                     <TabsTrigger value="contact">Contact</TabsTrigger>
+                    <TabsTrigger value="location">Location</TabsTrigger>
                   </TabsList>
 
                   {/* Text Message Tab */}
                   <TabsContent value="text" className="space-y-4">
                     <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="text-endpoint">API Endpoint</Label>
+                        <Input
+                          id="text-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_TEXT
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
                       <div>
                         <Label htmlFor="text-to">Phone Number</Label>
                         <Input
@@ -366,58 +451,69 @@ export default function PlaygroundPage() {
                     </div>
                   </TabsContent>
 
-                  {/* Media Message Tab */}
-                  <TabsContent value="media" className="space-y-4">
+                  {/* Image Message Tab */}
+                  <TabsContent value="image" className="space-y-4">
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="media-to">Phone Number</Label>
+                        <Label htmlFor="image-endpoint">API Endpoint</Label>
                         <Input
-                          id="media-to"
-                          placeholder="+628517991457"
-                          value={mediaMessage.to}
+                          id="image-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_IMAGE
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="image-to">Phone Number</Label>
+                        <Input
+                          id="image-to"
+                          placeholder="6281234567890"
+                          value={imageMessage.to}
                           onChange={(e) =>
-                            setMediaMessage({
-                              ...mediaMessage,
+                            setImageMessage({
+                              ...imageMessage,
                               to: e.target.value,
                             })
                           }
                         />
                       </div>
                       <div>
-                        <Label htmlFor="media-url">Media URL</Label>
+                        <Label htmlFor="image-url">Image URL</Label>
                         <Input
-                          id="media-url"
-                          placeholder="https://example.com/image.jpg"
-                          value={mediaMessage.mediaUrl}
+                          id="image-url"
+                          placeholder="https://picsum.photos/800/600"
+                          value={imageMessage.imageUrl}
                           onChange={(e) =>
-                            setMediaMessage({
-                              ...mediaMessage,
-                              mediaUrl: e.target.value,
+                            setImageMessage({
+                              ...imageMessage,
+                              imageUrl: e.target.value,
                             })
                           }
                         />
                       </div>
                       <div>
-                        <Label htmlFor="media-caption">
+                        <Label htmlFor="image-caption">
                           Caption (Optional)
                         </Label>
                         <Textarea
-                          id="media-caption"
-                          placeholder="Enter caption here..."
+                          id="image-caption"
+                          placeholder="Beautiful random image from API 📸"
                           rows={3}
-                          value={mediaMessage.caption}
+                          value={imageMessage.caption}
                           onChange={(e) =>
-                            setMediaMessage({
-                              ...mediaMessage,
+                            setImageMessage({
+                              ...imageMessage,
                               caption: e.target.value,
                             })
                           }
                         />
                       </div>
                       <Button
-                        onClick={() => handleSendMessage("media")}
+                        onClick={() => handleSendMessage("image")}
                         disabled={
-                          loading || !mediaMessage.to || !mediaMessage.mediaUrl
+                          loading || !imageMessage.to || !imageMessage.imageUrl
                         }
                         className="w-full bg-purple-600 hover:bg-purple-700"
                       >
@@ -429,7 +525,248 @@ export default function PlaygroundPage() {
                         ) : (
                           <>
                             <Image className="mr-2 h-4 w-4" />
-                            Send Media Message
+                            Send Image
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  {/* File Message Tab */}
+                  <TabsContent value="file" className="space-y-4">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="file-endpoint">API Endpoint</Label>
+                        <Input
+                          id="file-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_FILE
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="file-to">Phone Number</Label>
+                        <Input
+                          id="file-to"
+                          placeholder="6281234567890"
+                          value={fileMessage.to}
+                          onChange={(e) =>
+                            setFileMessage({
+                              ...fileMessage,
+                              to: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="file-url">File URL</Label>
+                        <Input
+                          id="file-url"
+                          placeholder="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+                          value={fileMessage.fileUrl}
+                          onChange={(e) =>
+                            setFileMessage({
+                              ...fileMessage,
+                              fileUrl: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="file-name">Filename</Label>
+                        <Input
+                          id="file-name"
+                          placeholder="sample-document.pdf"
+                          value={fileMessage.filename}
+                          onChange={(e) =>
+                            setFileMessage({
+                              ...fileMessage,
+                              filename: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="file-caption">Caption (Optional)</Label>
+                        <Textarea
+                          id="file-caption"
+                          placeholder="Sample PDF document from API 📄"
+                          rows={3}
+                          value={fileMessage.caption}
+                          onChange={(e) =>
+                            setFileMessage({
+                              ...fileMessage,
+                              caption: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <Button
+                        onClick={() => handleSendMessage("file")}
+                        disabled={
+                          loading ||
+                          !fileMessage.to ||
+                          !fileMessage.fileUrl ||
+                          !fileMessage.filename
+                        }
+                        className="w-full bg-orange-600 hover:bg-orange-700"
+                      >
+                        {loading ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <File className="mr-2 h-4 w-4" />
+                            Send File
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  {/* Voice Message Tab */}
+                  <TabsContent value="voice" className="space-y-4">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="voice-endpoint">API Endpoint</Label>
+                        <Input
+                          id="voice-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_VOICE
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="voice-to">Phone Number</Label>
+                        <Input
+                          id="voice-to"
+                          placeholder="6281234567890"
+                          value={voiceMessage.to}
+                          onChange={(e) =>
+                            setVoiceMessage({
+                              ...voiceMessage,
+                              to: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="voice-url">Audio URL</Label>
+                        <Input
+                          id="voice-url"
+                          placeholder="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"
+                          value={voiceMessage.audioUrl}
+                          onChange={(e) =>
+                            setVoiceMessage({
+                              ...voiceMessage,
+                              audioUrl: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <Button
+                        onClick={() => handleSendMessage("voice")}
+                        disabled={
+                          loading || !voiceMessage.to || !voiceMessage.audioUrl
+                        }
+                        className="w-full bg-green-600 hover:bg-green-700"
+                      >
+                        {loading ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Mic className="mr-2 h-4 w-4" />
+                            Send Voice
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  {/* Video Message Tab */}
+                  <TabsContent value="video" className="space-y-4">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="video-endpoint">API Endpoint</Label>
+                        <Input
+                          id="video-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_VIDEO
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="video-to">Phone Number</Label>
+                        <Input
+                          id="video-to"
+                          placeholder="6281234567890"
+                          value={videoMessage.to}
+                          onChange={(e) =>
+                            setVideoMessage({
+                              ...videoMessage,
+                              to: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="video-url">Video URL</Label>
+                        <Input
+                          id="video-url"
+                          placeholder="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                          value={videoMessage.videoUrl}
+                          onChange={(e) =>
+                            setVideoMessage({
+                              ...videoMessage,
+                              videoUrl: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="video-caption">
+                          Caption (Optional)
+                        </Label>
+                        <Textarea
+                          id="video-caption"
+                          placeholder="Sample video from API 🎥"
+                          rows={3}
+                          value={videoMessage.caption}
+                          onChange={(e) =>
+                            setVideoMessage({
+                              ...videoMessage,
+                              caption: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <Button
+                        onClick={() => handleSendMessage("video")}
+                        disabled={
+                          loading || !videoMessage.to || !videoMessage.videoUrl
+                        }
+                        className="w-full bg-red-600 hover:bg-red-700"
+                      >
+                        {loading ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Video className="mr-2 h-4 w-4" />
+                            Send Video
                           </>
                         )}
                       </Button>
@@ -439,6 +776,17 @@ export default function PlaygroundPage() {
                   {/* Contact Message Tab */}
                   <TabsContent value="contact" className="space-y-4">
                     <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="contact-endpoint">API Endpoint</Label>
+                        <Input
+                          id="contact-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_CONTACT
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
                       <div>
                         <Label htmlFor="contact-to">Phone Number</Label>
                         <Input
@@ -481,6 +829,36 @@ export default function PlaygroundPage() {
                           }
                         />
                       </div>
+                      <div>
+                        <Label htmlFor="contact-email">Email (Optional)</Label>
+                        <Input
+                          id="contact-email"
+                          placeholder="john@example.com"
+                          value={contactMessage.contactEmail}
+                          onChange={(e) =>
+                            setContactMessage({
+                              ...contactMessage,
+                              contactEmail: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="contact-organization">
+                          Organization (Optional)
+                        </Label>
+                        <Input
+                          id="contact-organization"
+                          placeholder="Acme Corporation"
+                          value={contactMessage.contactOrganization}
+                          onChange={(e) =>
+                            setContactMessage({
+                              ...contactMessage,
+                              contactOrganization: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
                       <Button
                         onClick={() => handleSendMessage("contact")}
                         disabled={
@@ -500,6 +878,119 @@ export default function PlaygroundPage() {
                           <>
                             <User className="mr-2 h-4 w-4" />
                             Send Contact
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  {/* Location Message Tab */}
+                  <TabsContent value="location" className="space-y-4">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="location-endpoint">API Endpoint</Label>
+                        <Input
+                          id="location-endpoint"
+                          value={`POST ${buildApiUrl(
+                            MESSAGING_ENDPOINTS.SEND_LOCATION
+                          )}`}
+                          disabled
+                          className="bg-slate-100 text-slate-600 font-mono text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="location-to">Phone Number</Label>
+                        <Input
+                          id="location-to"
+                          placeholder="+628517991457"
+                          value={locationMessage.to}
+                          onChange={(e) =>
+                            setLocationMessage({
+                              ...locationMessage,
+                              to: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="location-latitude">Latitude</Label>
+                          <Input
+                            id="location-latitude"
+                            placeholder="-6.2088"
+                            value={locationMessage.latitude}
+                            onChange={(e) =>
+                              setLocationMessage({
+                                ...locationMessage,
+                                latitude: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="location-longitude">Longitude</Label>
+                          <Input
+                            id="location-longitude"
+                            placeholder="106.8456"
+                            value={locationMessage.longitude}
+                            onChange={(e) =>
+                              setLocationMessage({
+                                ...locationMessage,
+                                longitude: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="location-name">Location Name</Label>
+                        <Input
+                          id="location-name"
+                          placeholder="Jakarta, Indonesia"
+                          value={locationMessage.name}
+                          onChange={(e) =>
+                            setLocationMessage({
+                              ...locationMessage,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="location-address">Address</Label>
+                        <Input
+                          id="location-address"
+                          placeholder="Jakarta, Special Capital Region of Jakarta, Indonesia"
+                          value={locationMessage.address}
+                          onChange={(e) =>
+                            setLocationMessage({
+                              ...locationMessage,
+                              address: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <Button
+                        onClick={() => handleSendMessage("location")}
+                        disabled={
+                          loading ||
+                          !locationMessage.to ||
+                          !locationMessage.latitude ||
+                          !locationMessage.longitude ||
+                          !locationMessage.name ||
+                          !locationMessage.address
+                        }
+                        className="w-full bg-teal-600 hover:bg-teal-700"
+                      >
+                        {loading ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <MapPin className="mr-2 h-4 w-4" />
+                            Send Location
                           </>
                         )}
                       </Button>
@@ -651,10 +1142,34 @@ export default function PlaygroundPage() {
                   </div>
                   <div className="p-3 bg-slate-50 rounded-lg">
                     <p className="text-sm font-medium text-slate-900 mb-1">
-                      Media Message
+                      Image Message
                     </p>
                     <p className="text-xs text-slate-600">
-                      Send images, videos, or documents with optional captions
+                      Send images with optional captions using imageUrl
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg">
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      File/Document
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Send files and documents with filename and caption
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg">
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      Voice Message
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Send audio files as voice messages using audioUrl
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg">
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      Video Message
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Send video files with optional captions using videoUrl
                     </p>
                   </div>
                   <div className="p-3 bg-slate-50 rounded-lg">
@@ -663,6 +1178,14 @@ export default function PlaygroundPage() {
                     </p>
                     <p className="text-xs text-slate-600">
                       Share contact information as a vCard
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg">
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      Location Message
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Share location with coordinates, name, and address
                     </p>
                   </div>
                 </div>

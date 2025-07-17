@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Key, BarChart3, Zap, Clock, Webhook, Play } from "lucide-react";
+import {
+  Key,
+  BarChart3,
+  Zap,
+  Clock,
+  Webhook,
+  Play,
+  BookOpen,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -103,6 +111,20 @@ export function SidebarInstance({ instanceData }) {
             <Clock className="h-4 w-4 mr-3" />
             Integrations
           </motion.div>
+
+          {/* Separator */}
+          <div className="border-t border-slate-200 my-4"></div>
+
+          <Link href={`/dashboard/instance/${params.id}/docs`}>
+            <motion.div
+              className={getLinkClass("/docs")}
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+            >
+              <BookOpen className="h-4 w-4 mr-3" />
+              API Docs
+            </motion.div>
+          </Link>
         </nav>
       </div>
     </motion.div>
